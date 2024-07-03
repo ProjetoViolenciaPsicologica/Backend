@@ -24,7 +24,7 @@ from datetime import datetime, timedelta
 from django.utils import timezone
 from calendar import monthrange
 
-from ..views import get_dispersao, get_desvio
+from ..views import get_dispersao, get_desvio, get_pizza, get_bar
 
 # Raiz da Api
 
@@ -89,13 +89,14 @@ class DesvioPadraoFiltro(filters.BaseFilterBackend):
                 queryset = queryset.filter(usuario__area__definicaoArea=area)
 
         if idade_min and idade_max:
-            print("oi")
             try:
-                queryset = queryset.exclude(idade__lt=idade_min, idade__gt=idade_max)
+                queryset = queryset.filter(idade__gte=idade_min, idade__lte=idade_max)
+                print(queryset)
             except:
                 raise Exception("Houve um erro na definição de idades")
         else:
-            queryset = queryset.filter(idade__lte=idade)
+            if idade:
+                queryset = queryset.filter(idade=idade)
 
         if sexo:
             queryset = queryset.filter(escolha_sexo=sexo)
@@ -122,6 +123,8 @@ class FormularioFiltro(filters.BaseFilterBackend):
         usuario = request.query_params.get('usuario')
         area = request.query_params.get('area')
         tipo_usuario = request.query_params.get('tipo_usuario')
+        idade_min = request.query_params.get('idade_min')
+        idade_max = request.query_params.get('idade_max')
 
         if data_inicio and data_fim:
             try:
@@ -150,8 +153,14 @@ class FormularioFiltro(filters.BaseFilterBackend):
             if area:
                 queryset = queryset.filter(usuario__area__definicaoArea=area)
 
-        if idade:
-            queryset = queryset.filter(idade=idade)
+        if idade_min and idade_max:
+            try:
+                queryset = queryset.filter(idade__gte=idade_min, idade__lte=idade_max)
+            except:
+                raise Exception("Houve um erro na definição de idades")
+        else:
+            if idade:
+                queryset = queryset.filter(idade=idade)
 
         if sexo:
             queryset = queryset.filter(escolha_sexo=sexo)
@@ -276,8 +285,8 @@ class FormularioPorMesEscolhido(APIView):
         )
 
         # Dia 11 até 15
-        primeiro_dia_3 = timezone.datetime(ano_atual, mes, 11)
-        ultimo_dia_3 = timezone.datetime(ano_atual, mes, 15)
+        primeiro_dia_3 = timezone.datetime(ano_atual, mes, 11, 0, 0, 0)
+        ultimo_dia_3 = timezone.datetime(ano_atual, mes, 15, 23, 59, 59)
 
         form_3 = Formulario.objects.filter(
             data_e_hora__gte=primeiro_dia_3,
@@ -559,9 +568,13 @@ class DocPDF(APIView):
 
             dispersao = get_dispersao(queryset)
             desvio = get_desvio(queryset)
+            bar = get_bar(queryset)
+            pizza = get_pizza(queryset)
 
             resultado['Dispersao'] = dispersao
             resultado['Desvio'] = desvio
+            resultado['Barra'] = bar
+            resultado['Pizza'] = pizza
 
             return Response(resultado, status=200)
         except Exception as e:
