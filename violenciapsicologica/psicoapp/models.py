@@ -1,9 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import UserManager, AbstractBaseUser, PermissionsMixin
 from django.dispatch import receiver
-from django.urls import reverse
+# from django.urls import reverse
 from django_rest_passwordreset.signals import reset_password_token_created
-from django.core.mail import send_mail, EmailMessage
+# from django.core.mail import send_mail, EmailMessage
 class LocalFormulario(models.Model):
 
     definicaoLocalForm = models.CharField(
@@ -136,14 +136,37 @@ class User(AbstractBaseUser, PermissionsMixin):
 # Definindo models da aplicação
 
 class Formulario(models.Model):
-    campo_questoes = models.TextField()
+    campo_questoes = models.TextField(
+        blank=True,
+        null=True
+    )
     idade = models.IntegerField(
-        default = 0
+        default = 0,
+        blank=True,
+        null=True
     )
     data_e_hora = models.DateTimeField(
-        default = ''
+        default = '',
+        blank=True,
+        null=True
     )
     escolha_sexo = models.CharField(
+        max_length=255,
+        default = '',
+        blank=True,
+        null=True
+    )
+    encaminhado_por = models.TextField(
+        blank=True,
+        null=True
+    )
+    especialidade = models.CharField(
+        max_length=255,
+        default = '',
+        blank=True,
+        null=True
+    )
+    prontuario = models.CharField(
         max_length=255,
         default = ''
     )

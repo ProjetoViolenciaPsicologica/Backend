@@ -3,7 +3,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
-from .views import CriaFormulario, TotalFormulariosView, ExibirTodosFormularios, FormulariosPorMes, MyTokenObtainPairView, SinaisFormularios, QuantidadeRespostas, FormularioPorMesEscolhido, FormularioFiltrado, APIRoot, UserRegistrationAPIView, Usuario, UsuarioId, TipoUsuarioView, TipoUsuarioIdView, AreaUsuarioView, AreaUsuarioIdView, LocalAplicacaoView, LocalAplicacaoIdView, GrauInstrucaoIdView, GrauInstrucaoView, DispersaoFormulario, DesvioPadraoFormulario, LogoutView, UserAdminRegistrationAPIView, CreateGrauInstrucaoView, CreateLocalAplicacaoView, CreateAreaUsuarioView, CreateTipoUsuarioView, DocPDF
+from .views import CriaFormulario, TotalFormulariosView, ExibirTodosFormularios, FormulariosPorMes, MyTokenObtainPairView, SinaisFormularios, QuantidadeRespostas, FormularioPorMesEscolhido, FormularioFiltrado, APIRoot, UserRegistrationAPIView, Usuario, UsuarioId, TipoUsuarioView, TipoUsuarioIdView, AreaUsuarioView, AreaUsuarioIdView, LocalAplicacaoView, LocalAplicacaoIdView, GrauInstrucaoIdView, GrauInstrucaoView, DispersaoFormulario, DesvioPadraoFormulario, LogoutView, UserAdminRegistrationAPIView, CreateGrauInstrucaoView, CreateLocalAplicacaoView, CreateAreaUsuarioView, CreateTipoUsuarioView, DocPDF, FormularioIdView
 from django.urls import include
 
 app_name = 'psicoapp'
@@ -32,6 +32,7 @@ urlpatterns = [
     path('formulario/novo', CriaFormulario.as_view(), name='formulario_novo'),
     path('formulario/quantidade', TotalFormulariosView.as_view(), name='formulario_quantidade'),
     path('formulario', ExibirTodosFormularios.as_view(), name='formulario_todos'),
+    path('formulario/<int:id>', FormularioIdView.as_view(), name='formulario_manager'),
     path('formulario/filtro/', FormularioFiltrado.as_view(), name='formulario_filtrado'),
     path('formulario/porMes', FormulariosPorMes.as_view(), name='formulario_mes'),
     path('formulario/porMes/<int:pk>', FormularioPorMesEscolhido.as_view(), name='formulario_mes_escolhido'),

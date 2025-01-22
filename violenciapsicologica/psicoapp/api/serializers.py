@@ -28,7 +28,10 @@ class UserAdminSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'email', 'name', 'password')
 
-        extra_kwargs = {'password': {'write_only': True}}
+        extra_kwargs = {
+            'password': {'write_only': True},
+            'name': {'help_text': 'Exemplo: exemplo_usuario'},
+        }
 
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
@@ -48,7 +51,10 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'email', 'name', 'password', 'tipo', 'area')
 
-        extra_kwargs = {'password': {'write_only': True}}
+        extra_kwargs = {
+            'password': {'write_only': True},
+            'name': {'help_text': 'Exemplo: exemplo_usuario'},
+            }
 
     def create(self, validated_data):
         tipo_data = validated_data.pop('tipo')
@@ -104,7 +110,7 @@ class FormularioSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Formulario
-        fields = ("id", "campo_questoes", "idade", "escolha_sexo", "localAplicacao", 'grauInstrucao')
+        fields = ("id", "campo_questoes", "idade", "escolha_sexo", "localAplicacao", 'grauInstrucao', 'encaminhado_por', 'especialidade', 'prontuario')
 
     def create(self, validated_data):
         local_data = validated_data.pop('localAplicacao')

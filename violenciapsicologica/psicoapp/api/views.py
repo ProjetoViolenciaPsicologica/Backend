@@ -60,6 +60,9 @@ class DesvioPadraoFiltro(filters.BaseFilterBackend):
         tipo_usuario = request.query_params.get('tipo_usuario')
         idade_min = request.query_params.get('idade_min')
         idade_max = request.query_params.get('idade_max')
+        encaminhado_por = request.query_params.get('encaminhado_por')
+        especialidade = request.query_params.get('especialidade')
+        prontuario = request.query_params.get('prontuario')
 
         if data_inicio and data_fim:
             try:
@@ -108,6 +111,16 @@ class DesvioPadraoFiltro(filters.BaseFilterBackend):
         if local_aplicacao:
             local_app = LocalFormulario.objects.get(definicaoLocalForm=local_aplicacao)
             queryset = queryset.filter(localAplicacao=local_app)
+
+        if encaminhado_por:
+            queryset = queryset.filter(encaminhado_por=encaminhado_por)
+
+        if especialidade:
+            queryset = queryset.filter(especialidade=especialidade)
+
+        if prontuario:
+            queryset = queryset.filter(prontuario=prontuario)
+
 
         return queryset
 
@@ -182,7 +195,6 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     def get_token(cls, user):
         token = super().get_token(user)
 
-
         token['name'] = user.get_full_name()
         token['tipo'] = user.get_area()
         token['area'] = user.get_tipo()
@@ -206,8 +218,8 @@ class LogoutView(APIView):
         except Exception:
             return Response({"error": "Falha ao processar a solicitação de logout."}, status=status.HTTP_400_BAD_REQUEST)
 
-# Definição de endpoints
 
+# Definição de endpoints
 class CriaFormulario(generics.CreateAPIView):
     serializer_class = FormularioSerializer
 
@@ -216,6 +228,13 @@ class CriaFormulario(generics.CreateAPIView):
         serializer.save(
             data_e_hora=(datetime.now() - timedelta(hours=3)),
             usuario=self.request.user)
+
+
+class FormularioIdView(generics.RetrieveUpdateAPIView):
+    queryset = Formulario.objects.all()
+    serializer_class = FormularioSerializer
+    lookup_field = 'id'
+
 
 
 class TotalFormulariosView(APIView):
@@ -228,6 +247,7 @@ class TotalFormulariosView(APIView):
 class ExibirTodosFormularios(generics.ListAPIView):
     queryset = Formulario.objects.all()
     serializer_class = FormularioSerializer
+    filter_backends = [FormularioFiltro]
 
 
 class FormulariosPorMes(APIView):
